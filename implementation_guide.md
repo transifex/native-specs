@@ -534,50 +534,48 @@ class CDSHandler
       logger.error('Error retrieving translations from CDS')
 
   return translations
-```
 
-```javascript
-// Fetch the languages defined in the CDS for the specific project.
-// Returned structure:
-// {
-//   "data": [
-//     {
-//       "name": "<lang name>",
-//       "code": "<lang code>",
-//       "localized_name": "<localized version of name>",
-//       "rtl": <bool>
-//     },
-//     { ... }
-//   ],
-//   "meta": {
-//     ...
-//   }
-// }
-// - return: a dictionary of language information
-function fetch_languages()
-  cds_url = this.cds_host + '/languages'
-  languages = []
+  // Fetch the languages defined in the CDS for the specific project.
+  // Returned structure:
+  // {
+  //   "data": [
+  //     {
+  //       "name": "<lang name>",
+  //       "code": "<lang code>",
+  //       "localized_name": "<localized version of name>",
+  //       "rtl": <bool>
+  //     },
+  //     { ... }
+  //   ],
+  //   "meta": {
+  //     ...
+  //   }
+  // }
+  // - return: a dictionary of language information
+  function fetch_languages()
+    cds_url = this.cds_host + '/languages'
+    languages = []
 
-  try
-    response = requests.get(
-      this.host + cds_url,
-      headers={
-        'Authorization': 'Bearer {token}{secret}'.format(
-          token=this.token,
-          secret=':' + this.secret,
-        ),
-        'Accept-Encoding': 'gzip',
-      }
-    )
-    if not response.ok:
-      raise Exception()
+    try
+      response = requests.get(
+        this.host + cds_url,
+        headers={
+          'Authorization': 'Bearer {token}{secret}'.format(
+            token=this.token,
+            secret=':' + this.secret,
+          ),
+          'Accept-Encoding': 'gzip', 
+        }
+      )
+      if not response.ok:
+        raise Exception()
 
-    languages = response.json()['data']
+      languages = response.json()['data']
 
-  catch
-      logger.error('Error retrieving languages from CDS')
+    catch
+        logger.error('Error retrieving languages from CDS')
 
-  return languages
+    return languages
 ```
 
 ## 2.5 Daemon
@@ -725,10 +723,10 @@ When this step is over you support escaped and unescaped variants of the transla
 
 ```javascript
 {% raw %}{% t "This is <b>nice</b>" %}{% endraw %}
-# returns "This is &lt;b&gt;nice&lt;/b&gt;"
+// returns "This is &lt;b&gt;nice&lt;/b&gt;"
 
 {% raw %}{% ut "This is <b>nice</b>" %}{% endraw %}
-# returns This is <b>nice</b>
+// returns "This is <b>nice</b>"
 ```
 
 #### Pseudocode

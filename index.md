@@ -1,3 +1,5 @@
+**Transifex Native** is an end-to-end cloud-based localization stack that brings a new paradigm to the continuous development and localization workflow. One of its main components is the SDK. This document provides all necessary information to developers that want to create a Native SDK on a new programming language or framework.
+
 # Contents
 
 * [Overview](#overview)
@@ -7,12 +9,9 @@
 
 # Overview
 
-This document provides all necessary information to developers that want to create an SDK that supports Transifex Native on a new programming language or framework.
-
 Examples of Transifex Native implementations:
 
 * [Transifex Python SDK](https://github.com/transifex/transifex-python/)
-
 * [Transifex Javascript SDK](https://github.com/transifex/transifex-javascript)
 
 ## Library Structure

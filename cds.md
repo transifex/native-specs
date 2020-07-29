@@ -1,4 +1,4 @@
-# 3. CDS
+# 3. Content Delivery Service
 
 [Content Delivery Service](https://docs.transifex.com/transifex-native-sdk-overview/hosting-translations) (CDS) is a web service that retrieves and caches translations from Transifex, in order to later serve them to the Native SDK. It exposes a set of HTTPS endpoints to retrieve and push content or invalidate the cache.
 
