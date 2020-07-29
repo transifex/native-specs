@@ -1,4 +1,4 @@
-# Transifex Native SDK: Programming Language Specification
+# Transifex Native SDK Programming Language Specification
 
 * [Overview](#overview)
 * [Core components](core_components.md)
