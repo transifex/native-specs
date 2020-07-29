@@ -1,4 +1,5 @@
 theme: jekyll-theme-cayman
+url: https://transifex.github.io/native-specs
 title: Transifex Native SDK Specification
 description: Creating an SDK that supports Transifex Native
 twitter:
