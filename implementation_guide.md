@@ -66,7 +66,7 @@ class MemoryCache
   function update(String locale_code, Dictionary translations)
     this.translations_by_locale[locale_code] = translations
 ```
-            
+
 ##### NativeCore
 
 ```javascript
@@ -93,7 +93,7 @@ class NativeCore
 ##### StringRenderer
 
 ```javascript
-// Takes care of rendering a string, by replacing any placeholders 
+// Takes care of rendering a string, by replacing any placeholders
 // with actual variable values. Later it will also handle
 // the case of missing or invalid translations
 function render_string(String source_string, String string_to_render, String locale_code, Dictionary params) -> String
@@ -105,7 +105,7 @@ function render_string(String source_string, String string_to_render, String loc
   return ICUMessageFormat.format(string_to_render, params, locale_code)
 ```
 
-Note that `ICUMessageFormat` is supposed to be a 3rd-party library that knows how to render ICU strings with their parameters, based on the given locale. If such a library does not exist for the programming language you are developing on, or if you don’t want to use such a library for any reason, you need to implement one of your own. 
+Note that `ICUMessageFormat` is supposed to be a 3rd-party library that knows how to render ICU strings with their parameters, based on the given locale. If such a library does not exist for the programming language you are developing on, or if you don’t want to use such a library for any reason, you need to implement one of your own.
 
 Here is an [example integration](https://github.com/rolepoint/pyseeyou/blob/master/pyseeyou/grammar.py) of the grammar you will have to create. Also, check [how ICU works](https://format-message.github.io/icu-message-format-for-translators/index.html) to better understand exactly what should be implemented. Of all the features shown here *date formatting* is nice to have, while the rest are expected to be supported in all Native SDKs (variable placeholders, `plural`, `select`).
 
@@ -280,7 +280,7 @@ Native SDKs should accept the following metadata for each translatable phrase:
 
 #### Character limit
 
-The maximum number of characters a translation for this string is allowed to have. Useful for making sure a text always fits in a UI element or a similar constraint. 
+The maximum number of characters a translation for this string is allowed to have. Useful for making sure a text always fits in a UI element or a similar constraint.
 
 **Type:** `int`. Needs to be explicitly provided by the developer in the code/template.
 
@@ -299,16 +299,16 @@ Tags are used to categorize strings in arbitrary ways depending on the applicati
 
 #### Occurrences
 
-A translatable phrase might be found in multiple places in the same app. As long as the phrase and its (optional) context are identical, this will be treated as one phrase, with multiple instances. Having the information of where in the code a phrase appears can be convenient for many reasons, such as traceability. 
+A translatable phrase might be found in multiple places in the same app. As long as the phrase and its (optional) context are identical, this will be treated as one phrase, with multiple instances. Having the information of where in the code a phrase appears can be convenient for many reasons, such as traceability.
 
-Each occurrence should be like <relative_file_path>:<line_of_code>, where relative means in relation to the app root folder (i.e. not the full absolute path of the file). 
+Each occurrence should be like <relative_file_path>:<line_of_code>, where relative means in relation to the app root folder (i.e. not the full absolute path of the file).
 
 **Type:** `Array[String]`. Should be automatically retrieved by the Native SDK during the string extraction phase.
 **Example:** `['src/views/projects.py:137', 'src/api/strings.py:84]`
 
 ### Code examples
 
-These are a few examples of translatable strings that the SDK should detect and extract. Depending on the programming language and framework the SDK is developed for, 
+These are a few examples of translatable strings that the SDK should detect and extract. Depending on the programming language and framework the SDK is developed for,
 
 #### Django templates
 
@@ -377,7 +377,7 @@ The implementation of CallDetectionVisitor and parse_source_strings is prohibiti
 
 
 ## 2.4 Pushing source content
-Create **CDSHandler** and specifically its pushing functionality. **CDSHandler** will use the [push API endpoint](#heading=h.kfa0dwq0y8j9) to send the data to CDS. 
+Create **CDSHandler** and specifically its pushing functionality. **CDSHandler** will use the [push API endpoint](#heading=h.kfa0dwq0y8j9) to send the data to CDS.
 
 Note that any requests to CDS should be [authenticated](#heading=h.9bq5qbsde8sw). In particular, pushing data requires both a *token* and a *secret*.
 
@@ -414,7 +414,7 @@ class CDSHandler
     this.cds_host = cds_host
 
   // Push source strings to CDS.
-  // - strings: a list of `SourceString` objects 
+  // - strings: a list of `SourceString` objects
   // - purge: if true, any string that is not in `strings` will be deleted from CDS,
   //          if false all strings will be appended to those on CDS
   // - return: the HTTP response object
@@ -495,7 +495,7 @@ class CDSHandler
   //     '<key>': {'string': '<translation>'},
   //     ...
   //   }
-  // } 
+  // }
   function fetch_translations(locale_code=null):
 
     cds_url = this.cds_host + '/content/{locale_code}'
@@ -566,7 +566,7 @@ function fetch_languages()
           token=this.token,
           secret=':' + this.secret,
         ),
-        'Accept-Encoding': 'gzip', 
+        'Accept-Encoding': 'gzip',
       }
     )
     if not response.ok:
@@ -583,7 +583,7 @@ function fetch_languages()
 ## 2.5 Daemon
 Implement a mechanism that periodically retrieves new translations from CDS.
 
-Depending on the type of application, it could make sense to retrieve the translations over the air periodically, without going through the normal entry point of the app. 
+Depending on the type of application, it could make sense to retrieve the translations over the air periodically, without going through the normal entry point of the app.
 
 For example, if you are implementing Native for a backend framework, you wouldn’t want to have to restart the server in order to retrieve the translations. Instead you would like translations to be fetched on an interval, without restarting the server or doing a manual action to trigger this.
 
@@ -623,7 +623,7 @@ Starting with Hello, friend as the source string, and assuming the translation i
 
 Another idea is to allow developers to define a composite policy that combines two or more policies together, as well as give them the ability to define their own policy.
 
-The possibilities are endless; you may come up with other great policies that bring value to the user. 
+The possibilities are endless; you may come up with other great policies that bring value to the user.
 
 ##### Pseudocode
 
@@ -681,7 +681,7 @@ If the source string also has invalid syntax, the options are fewer, as you cann
 class RenderedSourceErrorPolicy
 
   function handle(STRING source_string, STRING translation, STRING locale_code, Dictionary params)
-    // Try to render the source string, with the parameters (ICU variables) 
+    // Try to render the source string, with the parameters (ICU variables)
     try
       return StringRenderer.render(source_string, params)
     // If rendering fails, just return the raw source string
@@ -820,7 +820,7 @@ t("Hello", _key="welcome_msg")
 
 #### Key generation
 
-The algorithm that generates keys and supports pluralized strings is quite complex. The reason is that the content for each plural rule must be extracted separately. For an ICU string that looks like {% raw %}`{cnt, plural, one {A table} other {{cnt} tables}}`{% endraw %}, the following intermediate string must be created: `1:A table:5:{cnt} tables`. 
+The algorithm that generates keys and supports pluralized strings is quite complex. The reason is that the content for each plural rule must be extracted separately. For an ICU string that looks like {% raw %}`{cnt, plural, one {A table} other {{cnt} tables}}`{% endraw %}, the following intermediate string must be created: `1:A table:5:{cnt} tables`.
 
 This means that the original string must be parsed using the ICU grammar and return all necessary components. The **ICUMessageFormat** library you have integrated in or built for the SDK may already have this functionality, in which case key generation will be straightforward.
 
@@ -915,7 +915,7 @@ class MyView(TemplateView):
         return {'msg': t('The message')}
 ```
 
-What Python does when reading the source .py file above, is to go through all lines of code. While the t() function in 'msg': t('The message') will only be executed when get_context_data() is actually called during the handling of an HTTP request, description = t('The description') will be called immediately the first time this file (module) is read by the interpreter. 
+What Python does when reading the source .py file above, is to go through all lines of code. While the t() function in 'msg': t('The message') will only be executed when get_context_data() is actually called during the handling of an HTTP request, description = t('The description') will be called immediately the first time this file (module) is read by the interpreter.
 
 The problem is that this happens very early in the program execution, and at that time the Native SDK hasn’t been initialized yet. Even if it had, the translations will certainly not be in yet. The solution is to implement a lazy variant:
 
@@ -1001,4 +1001,6 @@ Only makes sense if the **Daemon** is implemented. Determines how often the SDK 
 TRANSIFEX_SYNC_INTERVAL = 60 * 60 // 60 minutes
 ```
 
-Previous: [Core components](core_components.md)  |  Next: [Content Delivery Service](cds.md)
+<div class="article-links">
+    <a href="core_components.html">← Core components</a> <a href="cds.html">Content Delivery Service →</a>
+</div>

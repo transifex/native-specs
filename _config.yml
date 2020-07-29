@@ -1,1 +1,14 @@
 theme: jekyll-theme-cayman
+title: Transifex Native SDK Specification
+description: Creating an SDK that supports Transifex Native
+twitter:
+  card: "summary"
+  username: "transifex"
+defaults:
+  - scope:
+      path: ""
+    values:
+      image:
+        path: /assets/images/default-card.png?v=1
+        height: 720
+        width: 720

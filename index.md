@@ -1,4 +1,4 @@
-# Transifex Native SDK Programming Language Specification
+# Contents
 
 * [Overview](#overview)
 * [Core components](core_components.md)
@@ -7,7 +7,7 @@
 
 # Overview
 
-This document provides all necessary information to developers that want to create an SDK that supports Transifex Native on a new programming language or framework. 
+This document provides all necessary information to developers that want to create an SDK that supports Transifex Native on a new programming language or framework.
 
 Examples of Transifex Native implementations:
 
@@ -25,4 +25,6 @@ It is recommended that the architecture is made in a way that the language domai
 
 *Language (generic) code should not depend on framework (specific) code, while the opposite is expected and encouraged.*
 
-Next: [Core Components](core_components.md)
+<div class="article-links only-next">
+    <a href="core_components.html">Core components →</a>
+</div>

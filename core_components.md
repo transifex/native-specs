@@ -13,13 +13,13 @@ The following diagram shows the main parts of any system that implements Transif
 
 ### Core functionality
 
-This group of components is an autonomous subsystem that can produce the final strings to display to the user, based on the ICU syntax, while getting the available translations from a cache. 
+This group of components is an autonomous subsystem that can produce the final strings to display to the user, based on the ICU syntax, while getting the available translations from a cache.
 
 #### NativeCore
 
 Orchestrates the string rendering flow. Uses **Cache** to get available translations and **StringRenderer** to get the final translated string.
 
-#### Cache	
+#### Cache
 
 A storage that holds the available translations. In its simplest form it’s a dictionary/hashmap based on language and string key.
 
@@ -31,7 +31,7 @@ Responsible for taking an ICU string and a set of parameters, and producing the 
 
 This component provides a low-level implementation of ICU’s Message Format syntax, i.e. it knows how to produce a rendered string after replacing all variable placeholders, handling plurals, genders etc.
 
-Depending on the programming language you are developing in, there might be existing 3rd-party libraries that support ICU Message Format. 
+Depending on the programming language you are developing in, there might be existing 3rd-party libraries that support ICU Message Format.
 
 #### MissingPolicy
 
@@ -55,7 +55,7 @@ The `t` function escapes HTML before rendering the final strings, while `ut` doe
 
 For uniformity reasons, it is preferred to keep the t/ut naming throughout all Native SDKs. If, however, this is not possible due to language or framework limitations, it is advisable to go with something similar, and short. Keep in mind that t stands for "translate" and ut stands for "unescaped translate".
 
-**LangState** is responsible for keeping the current state related to languages for the application. More specifically, it knows of what languages are available to the application and what the current language is for a specific user session. 
+**LangState** is responsible for keeping the current state related to languages for the application. More specifically, it knows of what languages are available to the application and what the current language is for a specific user session.
 
 ### Remote functionality
 
@@ -124,4 +124,6 @@ In addition to these names (which is also supported by ICU), Transifex Native us
 
 Not all strings are pluralized. Actually, most strings of an application are typically non-pluralized. Native SDKs need to know how to deal with pluralized strings, as well as the available plural rules. More on that later.
 
-Previous: [Overview](index.md)  |  Next: [Implementation guide](implementation_guide.md)
+<div class="article-links">
+    <a href="index.html">← Overview</a> <a href="implementation_guide.html">Implementation  guide →</a>
+</div>

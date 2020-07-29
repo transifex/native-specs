@@ -152,4 +152,6 @@ Content-Type: application/json; charset=utf-8
 }
 ```
 
-Previous: [Implementation guide](implementation_guide.md)  |  
+<div class="article-links">
+    <a href="implementation_guide.html">← Implementation guide</a>
+</div>
