@@ -7,6 +7,8 @@
 * [3.3 Pull content](#33-pull-content)
 * [3.4 Push content](#34-push-content)
 * [3.5 Invalidate cache](#35-invalidate-cache)
+* [3.6 Purge cache](#36-purge-cache)
+* [3.7 Analytics](#37-analytics)
 
 ## 3.1 Authentication
 
@@ -33,7 +35,15 @@ Content-Type: application/json; charset=utf-8
 ```
 
 ```bash
-### Response body
+Response status: 202
+- Content not ready, queued for download from Transifex
+- try again later
+
+Response status: 302
+- Get content from URL
+
+Response status: 200
+Response body:
 {
   "data": [
     {
@@ -55,13 +65,21 @@ Content-Type: application/json; charset=utf-8
 Get localized content for a specific language code.
 
 ```bash
-GET /content/<lang-code>
+GET /content/<locale_code>
 Authorization: Bearer <project-token>
 Content-Type: application/json; charset=utf-8
 ```
 
 ```bash
-### Response body
+Response status: 202
+- Content not ready, queued for download from Transifex
+- try again later
+
+Response status: 302
+- Get content from URL
+
+Response status: 200
+Response body:
 {
   "data": {
     "<key>": {
@@ -89,7 +107,7 @@ Content-Type: application/json; charset=utf-8
 ```
 
 ```bash
-### Request body
+Request body:
 {
   "data": {
     "<key>": {
@@ -107,10 +125,8 @@ Content-Type: application/json; charset=utf-8
     "purge": <bool>
   }
 }
-```
 
-```bash
-### Response body
+Response body:
 {
   "created": <int>,
   "updated": <int>,
@@ -123,32 +139,100 @@ Content-Type: application/json; charset=utf-8
 
 ## 3.5 Invalidate cache
 
-Force cache deletion for a specific resource content.
+Endpoint to force cache invalidation for a specific language or for
+all project languages. Invalidation triggers background fetch of fresh
+content for languages that are already cached in the service.
 
 ```bash
 POST /invalidate
-Authorization: Bearer <project-token>
+POST /invalidate/<locale_code>
+Authorization: Bearer <project-token>:<secret>
 Content-Type: application/json; charset=utf-8
 ```
 
-### Request body:
 ```bash
+Request body:
 {}
-```
 
-```bash
-### Response body (success):
+Response body (success):
 {
-  "status": 'success',
-  "token": "<project_token>",
-  "count": <number_of_languages_uncached>,
+  "status": "success",
+  "token": "<project-token>",
+  "count": "<number_of_resources_invalidated>",
+}
+
+Response body (fail):
+{
+  "status": "failed",
 }
 ```
 
-### Response body (fail):
+## 3.6 Purge cache
+
+Endpoint to purge cache for a specific resource content.
+
 ```bash
+POST /purge
+POST /purge/<locale_code>
+Authorization: Bearer <project-token>:<secret>
+Content-Type: application/json; charset=utf-8
+```
+
+```bash
+Request body:
+{}
+
+Response body (success):
+{
+  "status": "success",
+  "token": "<project-token>",
+  "count": "<number_of_resources_purged>",
+}
+
+Response body (fail):
 {
   "status": "failed",
+}
+```
+
+## 3.7 Analytics
+
+Endpoint to get usage analytics, per language, SDK and unique anonymized clients.
+
+```bash
+GET /analytics?filter[since]=<YYYY-MM-DD>&filter[until]=<YYYY-MM-DD>
+Authorization: Bearer <project-token>:<secret>
+Content-Type: application/json; charset=utf-8
+```
+
+```bash
+Response body:
+{
+  "data": [{
+    "languages": {
+      "<locale_code>": "<number_of_hits>",
+      ...
+    },
+    "sdks": {
+      "<sdk-version>": "<number_of_hits>",
+      ...
+    },
+    "clients": "<number_of_unique_clients>",
+    "date": "<YYYY-MM-DD or YYYY-MM>",
+  }, ...],
+  "meta": {
+    "total": {
+      "languages": {
+        "<locale_code>": "<total_number_of_hits>",
+        ...
+      },
+      "sdks": {
+        "<sdk-version>": "<total_number_of_hits>",
+        ...
+      },
+      "clients": "<total number_of_unique_clients>",
+    },
+  },
 }
 ```
 
