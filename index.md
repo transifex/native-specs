@@ -13,6 +13,8 @@ Examples of Transifex Native implementations:
 
 * [Transifex Python SDK](https://github.com/transifex/transifex-python/)
 * [Transifex Javascript SDK](https://github.com/transifex/transifex-javascript)
+* [Transifex iOS SDK](https://github.com/transifex/transifex-swift)
+* [Transifex Android SDK](https://github.com/transifex/transifex-java)
 
 ## Library Structure
 

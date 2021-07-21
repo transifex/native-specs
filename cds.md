@@ -6,9 +6,9 @@
 * [3.2 Languages](#32-languages)
 * [3.3 Pull content](#33-pull-content)
 * [3.4 Push content](#34-push-content)
-* [3.5 Invalidate cache](#35-invalidate-cache)
-* [3.6 Purge cache](#36-purge-cache)
-* [3.7 Analytics](#37-analytics)
+* [3.5 Job status](#35-job-status)
+* [3.6 Invalidate cache](#36-invalidate-cache)
+* [3.7 Purge cache](#37-purge-cache)
 
 ## 3.1 Authentication
 
@@ -30,11 +30,11 @@ Get a list of languages associated with a content resource.
 
 ```bash
 GET /languages
+
 Authorization: Bearer <project-token>
 Content-Type: application/json; charset=utf-8
-```
+Accept-version: v2
 
-```bash
 Response status: 202
 - Content not ready, queued for download from Transifex
 - try again later
@@ -47,14 +47,15 @@ Response body:
 {
   "data": [
     {
-      "name": "<locale_name>",
-      "code": "<locale_code>",
-      "localized_name": "<localized_version_of_name>",
-      "rtl": <bool>
+      "name": "<lang name>",
+      "code": "<lang code>",
+      "localized_name": "<localized version of name>",
+      "rtl": true/false
     },
     { ... }
   ],
   "meta": {
+    source_lang_code: "<lang code>",
     ...
   }
 }
@@ -65,12 +66,13 @@ Response body:
 Get localized content for a specific language code.
 
 ```bash
-GET /content/<locale_code>
+GET /content/<lang-code>
+GET /content/<lang-code>?filter[tags]=tag1,tag2
+
 Authorization: Bearer <project-token>
 Content-Type: application/json; charset=utf-8
-```
+Accept-version: v2
 
-```bash
 Response status: 202
 - Content not ready, queued for download from Transifex
 - try again later
@@ -81,12 +83,12 @@ Response status: 302
 Response status: 200
 Response body:
 {
-  "data": {
-    "<key>": {
-      "string": "<string>"
+  data: {
+    <key>: {
+      'string': <string>
     }
   },
-  "meta": {
+  meta: {
     ...
   }
 }
@@ -96,48 +98,119 @@ Response body:
 
 Push source content.
 
-If purge: true in meta object, then replace the entire resource content with the pushed content of this request.
+Only one push is allowed per project token at the same time.
+Pushing on the same project while another request is in progress will yield an
+HTTP 429 error response.
 
-If purge: false in meta object (the default), then append the source content of this request to the existing resource content.
+**Purge content**
+
+If `purge: true` in `meta` object, then replace the entire resource content with the pushed content of this request.
+
+If `purge: false` in `meta` object (the default), then append the source content of this request to the existing resource content.
+
+**Replace tags**
+
+If `override_tags: true` in `meta` object, then replace the existing string tags with the tags of this request.
+
+If `override_tags: false` in `meta` object (the default), then append tags from source content to tags of existing strings instead of overwriting them.
 
 ```bash
 POST /content
+
 Authorization: Bearer <project-token>:<secret>
 Content-Type: application/json; charset=utf-8
-```
+Accept-version: v2
 
-```bash
 Request body:
 {
-  "data": {
-    "<key>": {
-      "string": "<source_string>",
-      "meta": {
-        "context": [<string>, ...]
-        "developer_comment": "<string>",
-        "character_limit": "<int>",
-        "tags": ["<string>", ...],
+  data: {
+    <key>: {
+      string: <string>,
+      meta: {
+        context: <string>
+        developer_comment: <string>,
+        character_limit: <number>,
+        tags: <array>,
+        occurrences: <array>,
       }
     }
-    "<key>": { ... }
+    <key>: { .. }
   },
-  "meta": {
-    "purge": <bool>
+  meta: {
+    purge: <boolean>,
+    override_tags: <boolean>
   }
 }
 
+Response status: 202
 Response body:
 {
-  "created": <int>,
-  "updated": <int>,
-  "skipped": <int>,
-  "deleted": <int>,
-  "failed": <int>,
-  "errors": ["<string>", ...],
+  data: {
+    id: <string>,
+    links: {
+      job: <string>
+    }
+  }
 }
 ```
 
-## 3.5 Invalidate cache
+## 3.5 Job status
+
+Get job status for push source content action:
+- If "status" field is "pending" or "processing", you should check this endpoint again later
+- If "status" field is "failed", then you should check for "errors"
+- If "status" field is "completed", then you should check for "details" and "errors"
+
+```bash
+GET /jobs/content/<id>
+
+Authorization: Bearer <project-token>:<secret>
+Content-Type: application/json; charset=utf-8
+Accept-version: v2
+
+Response status: 200
+Response body:
+{
+  data: {
+    status: "pending",
+  },
+}
+
+Response status: 200
+Response body:
+{
+  data: {
+    status: "processing",
+  },
+}
+
+Response status: 200
+Response body:
+{
+  data: {
+    details: {
+      created: <number>,
+      updated: <number>,
+      skipped: <number>,
+      deleted: <number>,
+      failed: <number>
+    }
+    errors: [..],
+    status: "completed",
+  },
+}
+
+Response status: 200
+Response body:
+{
+  data: {
+    errors: [..],
+    status: "failed",
+  },
+}
+```
+
+## 3.6 Invalidate cache
 
 Endpoint to force cache invalidation for a specific language or for
 all project languages. Invalidation triggers background fetch of fresh
@@ -145,93 +218,78 @@ content for languages that are already cached in the service.
 
 ```bash
 POST /invalidate
-POST /invalidate/<locale_code>
+POST /invalidate/<lang-code>
+
 Authorization: Bearer <project-token>:<secret>
 Content-Type: application/json; charset=utf-8
-```
+Accept-version: v2
 
-```bash
+or
+
+Authorization: Bearer <project-token>
+X-TRANSIFEX-TRUST-SECRET: <transifex-secret>
+Content-Type: application/json; charset=utf-8
+Accept-version: v2
+
 Request body:
 {}
 
+Response status: 200
 Response body (success):
 {
-  "status": "success",
-  "token": "<project-token>",
-  "count": "<number_of_resources_invalidated>",
+  data: {
+    status: 'success',
+    token: <project-token>,
+    count: <number of resources invalidated>,
+  },
 }
 
+Response status: 500
 Response body (fail):
 {
-  "status": "failed",
+  data: {
+    status: 'failed',
+  },
 }
 ```
 
-## 3.6 Purge cache
+## 3.7 Purge cache
 
 Endpoint to purge cache for a specific resource content.
 
 ```bash
 POST /purge
-POST /purge/<locale_code>
+POST /purge/<lang-code>
+
 Authorization: Bearer <project-token>:<secret>
 Content-Type: application/json; charset=utf-8
-```
+Accept-version: v2
 
-```bash
+or
+
+Authorization: Bearer <project-token>
+X-TRANSIFEX-TRUST-SECRET: <transifex-secret>
+Content-Type: application/json; charset=utf-8
+Accept-version: v2
+
 Request body:
 {}
 
+Response status: 200
 Response body (success):
 {
-  "status": "success",
-  "token": "<project-token>",
-  "count": "<number_of_resources_purged>",
+  data: {
+    status: 'success',
+    token: <project-token>,
+    count: <number of resources purged>,
+  }
 }
 
+Response status: 500
 Response body (fail):
 {
-  "status": "failed",
-}
-```
-
-## 3.7 Analytics
-
-Endpoint to get usage analytics, per language, SDK and unique anonymized clients.
-
-```bash
-GET /analytics?filter[since]=<YYYY-MM-DD>&filter[until]=<YYYY-MM-DD>
-Authorization: Bearer <project-token>:<secret>
-Content-Type: application/json; charset=utf-8
-```
-
-```bash
-Response body:
-{
-  "data": [{
-    "languages": {
-      "<locale_code>": "<number_of_hits>",
-      ...
-    },
-    "sdks": {
-      "<sdk-version>": "<number_of_hits>",
-      ...
-    },
-    "clients": "<number_of_unique_clients>",
-    "date": "<YYYY-MM-DD or YYYY-MM>",
-  }, ...],
-  "meta": {
-    "total": {
-      "languages": {
-        "<locale_code>": "<total_number_of_hits>",
-        ...
-      },
-      "sdks": {
-        "<sdk-version>": "<total_number_of_hits>",
-        ...
-      },
-      "clients": "<total number_of_unique_clients>",
-    },
+  data: {
+    status: 'failed',
   },
 }
 ```
