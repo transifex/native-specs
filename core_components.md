@@ -59,7 +59,7 @@ For uniformity reasons, it is preferred to keep the t/ut naming throughout all N
 
 ### Remote functionality
 
-This part connects the SDK with the world. It is responsible for two things: pushing source strings to [Content Delivery Service](https://docs.transifex.com/transifex-native-sdk-overview/hosting-translations) (CDS), so that they can be translated, and pulling translations from CDS, which end up updating the **Cache**.
+This part connects the SDK with the world. It is responsible for two things: pushing source strings to [Content Delivery Service](https://developers.transifex.com/docs/content-delivery-service) (CDS), so that they can be translated, and pulling translations from CDS, which end up updating the **Cache**.
 
 CDS is a web service that retrieves and caches translations from Transifex, in order to later serve them to the Native SDK.
 
